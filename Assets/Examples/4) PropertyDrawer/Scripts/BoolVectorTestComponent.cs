@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 
+
+/// <summary>
+/// 创建自定义序列化属性类
+/// </summary>
 [System.Serializable]
 public class BoolVector3
 {
@@ -25,5 +28,7 @@ public class BoolVector3
 
 public class BoolVectorTestComponent : MonoBehaviour
 {
+    // 使用自定义属性类，在默认情况下，会以一般模式在Inspector显示该自定义属性类的属性
+    // 可以通过编写对应序列化属性类的Drawer“绘画器”来不使用默认的显示方式，而采用自定义的显示方式
     public BoolVector3 vec;
 }
