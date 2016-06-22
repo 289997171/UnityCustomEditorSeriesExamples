@@ -1,0 +1,659 @@
+视频地址： 	https://www.youtube.com/watch?v=ki6ud_b0_ik&list=PLdJWM-9hbpsFoEMrop5rXDJkdTlaPlg3Q&index=7
+http://www.ryan-meier.com/blog/
+https://github.com/ryanmeier/UnityCustomEditorSeriesExamples
+
+API 相关：	http://www.ceeger.com/Script/Editor.Classes.html
+
+
+所有编辑器功能代码必须在Editor目录下！！！注意，并非必须放在Asset/Editor。任意目录的Editor下就行！！！
+
+Unity3D 编辑器及扩展
+
+		Glossary 术语
+	1. GameObject
+	2. MonoBehaviorr/Component
+	3. Inspector
+	4. Field
+	5. Property
+
+
+Serializable Classes
+		可以轻松地组织、封装和包数据(Can be used to easily organize, encapsulate, and package data)
+
+[Serializable]
+public class PlayerStates {
+	public float moveSpeed = 1.0f;
+	public float turnSpee = 90.0f;
+}
+
+
+用注解方式，标记一个类的方法或变量 （Ways to tag a class or variable with a piece of data）
+
+序列化是其中之一 （[Serializable] from the last example is one of them!）
+
+Unity提供了几个检查员相关的属性 （Unity provides several inspector-related Attributes）
+
+
+http://docs.unity3d.com/Manual/Attributes.html
+
+[SerializeField]		将不会被序列化的非公共变量可以序列化，这么在下次读取时，就是上次赋值的值。
+[HideInInspector]		使用了该属性的变量不显示在inspector 但是被序列化。即不会显示，也不会被外部类调用。
+[ExecuteInEditMode()]：这个函数可以使代码在编辑模式下运行，不需要运行游戏；
+[ExecuteInEditMode]：　编辑环境中该功能（类）生效，简单讲就是。不运行游戏。就可你让你的功能起作用，比如：NGUI中的Slider
+[MenuItem("")]：导航条中加入自定义菜单。可参考：xiaobao1993.com/121.html
+[CustomEditor(typeof(EButton))]：自定义编辑器，描述了用于编辑器实时运行类型的一个编辑器类。当你为一个组件制作一个自定义编辑器时，你需要带上这个属性编辑器类。绑定使用该类。必须依赖EButton类。参考：xiaobao1993.com/272.html
+[RequireComponent (typeof (ClassName))]：添加该类时。自动会加入ClassName类。
+[ContextMenu ("XXX")]：加入Inspector面板右键菜单。点击执行该功能。
+[ContextMenuItem(,)]
+[Multiline()]
+[Range(,)]
+[Space()]
+[TextArea(,)]
+[Header()]
+[Tooltip()]
+[AddComponentMenu("XXX/XX/XXX")]：菜单中出现定义的该类。
+
+
+
+
+[HideInInspector]用法：
+正常情况下我们这样定义变量。如下：
+
+
+public int index;
+这样。我们在Inspector是能看到index变量的。
+
+如果我们要他不再Inspector显示。
+
+
+[HideInInspector]
+public int index;
+这样就不能在Inspector中看到。不能手动赋值了。
+
+[SerializeField]用法：
+
+正常情况下我们定义的私有变量在Inspector中我们是不能看到并且手动赋值了。 如果要就可以用[SerializeField]了。如下
+
+
+[SerializeField]
+private int index;
+这样即使是私有变量。我们也能在编辑时。在Inspector中赋值了。
+
+
+
+using UnityEngine;
+using System.Collections;
+using UnityEditor;
+using System.IO;
+public class TestEditor
+{
+    //%代表ctrl，#代表Shift，&代表Alt
+    [MenuItem("Plugin/测试菜单添加1级 %#o")]
+    public static void TestMenu1()
+    {
+        Test1();
+    }
+   [MenuItem("Plugin/测试菜单2/测试菜单2级目录1 %#f")]
+   public static void TestMenu2()
+   {
+        Test2();
+   }
+   [MenuItem("Plugin/测试菜单2/测试菜单2级目录2 %#f")]
+   public static void TestMenu3()
+   {
+        Test3();
+   }
+ 
+}
+
+
+
+using UnityEngine;
+
+public class Test3 : MonoBehaviour
+{
+    [HideInInspector]public float hiddenVariable = 1.0f;
+
+    [SerializeField]private float serializePrivateVariable = 2.0f;
+
+    [Space(30.0f)]public float spaceFloat = 10f;
+
+    [Range(3f, 4f)]public float rangeFloat = 3.5f;
+
+    [Header("Text Attributes")]public string headeredString = "headeredString";
+
+    [TextArea(3, 6)]public string textArea = "Here is some text\nin a\ntext area";
+
+    [Multiline(4)]public string multilineText = "Mult\ni\nline\ntext\nscroll\nto\nthis\ntext";
+
+    [Tooltip("this variable is an interger")]public int tooltippedInteger = 9;
+
+    // 鼠标右键点击，会有可执行的按钮，Output Value，点点击后，执行FieldContextFunction函数
+    [ContextMenuItem("Output Value", "FieldContextFunction")]public float ContextFloat = 0.0f;
+
+    private void FieldContextFunction()
+    {
+        Debug.Log(ContextFloat);
+    }
+
+
+    // 在Inspector中，Test3（Script）点击右键，会有一个Context Funtion按钮，点击后执行该函数
+    [ContextMenu("Context Funtion")]
+    public void ContextFunction()
+    {
+        Debug.Log("Context Function Activated!");
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gizmos 图标
+在场景视图中显示的对象信息( Display information about the object in the scene view )
+	2个函数可以添加Gizemos （Two functions you can put in your MonoBehavior）
+	1.OnDrawGizmos()			当绘制Gizmos，如果你想绘制可被点选的gizmos，执行这个函数。这允许你在场景中快速选择重要的物体。注意: OnDrawGizmos使用相对鼠标坐标。
+
+	public class example : MonoBehaviour {
+		void OnDrawGizmos() {
+			Gizmos.DrawIcon(transform.position, "Light Gizmo.tiff");
+		}
+	}
+
+	2.OnDrawGizmosSelected()	当选择时绘制Gizmos，如果你想在物体被选中时绘制gizmos，执行这个函数。Gizmos只在物体被选择的时候绘制。Gizmos不能被点选，这可以使设置更容易。例如:一个爆炸脚本可以绘制一个球来显示爆炸半径
+	public class example : MonoBehaviour {
+		public float explosionRadius = 5.0F;
+		void OnDrawGizmosSelected() {
+			Gizmos.color = Color.white;
+			Gizmos.DrawSphere(transform.position, explosionRadius);
+		}
+	}
+
+	Gizmos.color
+	Gizmo.DrawXXX(postion, <defining characteristics>)
+			1.Cube 			正方体
+			2.Icon 			图标
+			3.Line 			直线
+			4.Ray			射线
+			5.Sphere  		圆形
+			5.WireCube
+			6.WireSphere
+
+
+
+
+UnityEdutir Basics
+编辑文件夹 ‘Editor’ folder
+VS/MD Projects
+Cleanliness of object data
+
+EditorUtility.SetDirty(Object)
+	标记目标物体已改变。
+	当资源已改变并需要保存到磁盘，Unity内部使用dirty标识来查找。
+	例如，如果修改一个prefab的MonoBehaviour或ScriptableObject变量，必须告诉Unity该值已经改变。每当一个属性发生变化，Unity内置组件在内部调用setDirty。MonoBehaviour或ScriptableObject不自动做这个，因此如果你想值被保存，必须调用SetDirty。
+
+			//设置每个导入纹理的循环模式到Clamp
+			using UnityEngine;
+			using UnityEditor;
+			using System.Collections;
+
+			public class TexturePreprocessor : AssetPostprocessor {
+				void OnPostProcessTexture() {
+					TextureImporter textureImporter = assetImporter as TextureImporter;
+					textureImporter.mipmapEnabled = false;
+
+					string path = textureImporter.assetPath;
+
+					Object asset = AssetDatabase.LoadAssetAtPath(path, typeof(Texture2D));
+					Texture2D texture = asset as Texture2D;
+
+					if (texture != null) {
+						Debug.Log("Texture path: " + path);
+						texture.wrapMode = TextureWrapMode.Clamp;
+						EditorUtility.SetDirty(asset);
+					} else {
+						Debug.Log("error " + path);
+					}
+				}
+			}
+
+
+ScriptableObject 脚本化对象
+如果你想创建不需要附加到游戏物体的对象，你从这个类获得。
+这对于只是为了存储数据的资源是很有用的。
+
+
+AssetPostprocessor 资源处理器
+让你钩进导入管线，在运行脚本之前或导入资源之后。
+注意：这是一个编辑器类，如果想使用它你需要把它放到工程目录下的Assets/Editor文件夹下。编辑器类在UnityEditor命名空间下。所以当使用C#脚本时，你需要在脚本前面加上 "using UnityEditor"引用。
+这样你可以在导入的设置中重载默认值或修改导入的数据，如纹理或网格。
+assetPath
+	被导入的资源的路径名
+assetImporter
+	引用资源导入器
+...
+
+
+
+UnityEditor Basics
+EditorGUI
+如：
+	angle = EditorGUI.FloatFiled(postion, angle);
+Some added,editor-specific fields
+	ObjectField(Rect, Object, Type, bool)
+
+
+Undo RegisterUndo RegisterSceneUndo 撤销
+	让你在特定物体上注册撤销操作，以便你以后执行这个操作。
+	撤销功能，是通过事先对一个或者多个对象状态的保存来实现的，这更像是一个备份。在稍后执行撤销时，备份被恢复，好像从未发生过任何事情。
+	瞬间撤销一个或多个物体，只需调用函数RegisterUndo 或者 RegisterSceneUndo.
+
+Redo
+
+.PropertyField
+
+
+Accessing Data 数据翻耕
+
+SerializedObject 序列化物体
+	连同SerializedProperty 和编辑器类一起用。
+
+
+		//用于Transform（变换）组件的一个自定义Inspector（检视面板）。
+		using UnityEngine;
+		using UnityEditor;
+
+		[CustomEditor(typeof(Transform))]
+		public class TransformInspector : Editor {
+
+			SerializedObject m_Object;
+			SerializedProperty m_Property;
+
+			void OnEnable () {
+				m_Object = new SerializedObject (target);
+				m_Property = m_Object.FindProperty ("m_LocalPosition.x");
+			}
+
+			void OnInspectorGUI () {
+				// Grab the latest data from the object
+				// 从物体上抓取最新的数据。
+				m_Object.Update ();
+
+				// Editor UI for the property
+				// 属性的编辑器UI（用户界面）
+				EditorGUILayout.PropertyField (m_Property);
+
+				// Apply the property, handle undo
+				// 应用属性，处理undo（撤销）。
+				m_Object.ApplyModifiedProperties ();
+			}
+		}
+
+
+SerializedObject sobj = new SerializedObject(myComponent)
+	FindProperty(string propertyPath)
+
+SerializedProperty 序列化属性
+	类用于对象编辑器属性，是完全通用的方法，自动处理撤销和为预设的UI样式。
+	SerializedProperty与SerializedObject和Editor类配合使用。
+
+	.propertyType/ .type
+	.isArray, .arraySize,  <>ArrayElmentAtIndex
+	.<type>Value
+	.FindPropertyRelattive(string propertyPath)
+
+
+
+自定义编辑器类型
+PropertyDrawers
+	编辑behavior子类或属性的特殊编辑器
+	自动根据数据类型在编辑试图中创建
+	PropertyAttributes
+	Custom Classes
+
+Compoent Editors
+	MonoBehavior
+
+Editor Windows
+	Whatever you want
+
+
+
+[CustomPropertyDrawer(Type)]
+Extend PropertyDrawer class
+OnGUI(Rect, SerializedProperty, GUIContent)
+GetPropertyHeight(SerializedProperty, GUIContent)
+
+			// 编写一个普通的序列化类
+			[Serializable]
+			public class BoolVector3
+			{
+			    public bool x;
+			    public bool y;
+			    public bool z;
+
+			    public BoolVector3()
+			    {
+			    }
+
+			    public BoolVector3(bool x, bool y, bool z)
+			    {
+			        this.x = x;
+			        this.y = y;
+			        this.z = z;
+			    }
+			}
+
+			// 编写该类的编辑器
+			[CustomPropertyDrawer(typeof(BoolVector3))]
+		    public class BoolVector3Drawer : PropertyDrawer
+		    {
+		        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+		        {
+		            return base.GetPropertyHeight(property, label);
+		        }
+
+		        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+		        {
+		            // 获得需要的属性
+		            SerializedProperty x = property.FindPropertyRelative("x");
+		            SerializedProperty y = property.FindPropertyRelative("y");
+		            SerializedProperty z = property.FindPropertyRelative("z");
+
+		            // 单个属性的宽度
+		            float propWith = position.width/6;
+
+		            CreateItem(x, 0, propWith, position, "x:");
+		            CreateItem(y, 1, propWith, position, "y:");
+		            CreateItem(z, 2, propWith, position, "z:");
+
+		            // base.OnGUI(position, property, label);
+		        }
+
+
+		        private void CreateItem(SerializedProperty p, int index, float propWith, Rect postion, string content)
+		        {
+		            //1.创建属性描述
+		            EditorGUI.LabelField(new Rect(postion.x + index * 2 * propWith, postion.y, propWith, postion.height), content);
+		            //2.创建属性编辑框
+		            p.boolValue = EditorGUI.Toggle(new Rect(postion.x + (index * 2 + 1) * propWith, postion.y, propWith, postion.height), p.boolValue);
+		        }
+		    }
+
+    PropertyAttributes
+    Specify editor-specific constraints/data for a field
+    In addition to the included PropertyAttributes - you can make your own!
+    使用以上方法，我们可以轻易的对自己的属性类，编写对应的属性编辑工具
+
+注意：
+	GUILayout
+	PropertyDrawers
+	并不能所有状态下都工作良好
+
+Extend PropertyAttribute
+Constrctor called in[]
+Display/Logic handled by PropertDrawer
+	this.attribute property
+
+
+自定义注解：
+			using UnityEngine;
+
+
+			/// <summary>
+			/// 定义一个 [Angle(bool)] 的注解
+			/// </summary>
+			public class AngleAttribute : PropertyAttribute
+			{
+			    public readonly bool radians;
+
+			    public AngleAttribute(bool radians)
+			    {
+			        this.radians = radians;
+			    }
+
+			}
+
+			using UnityEditor;
+			using UnityEngine;
+
+			namespace Editor
+			{
+
+			    /// <summary>
+			    /// 对应[Angle(bool)]注解功能
+			    /// </summary>
+			    [CustomPropertyDrawer(typeof(AngleAttribute))]
+			    public class AngleAttributeDrawer : PropertyDrawer
+			    {
+
+			        // 获得注解
+			        private AngleAttribute angleAttribute = null;
+
+			        private AngleAttribute attributeValue
+			        {
+			            get
+			            {
+			                if (angleAttribute == null)
+			                {
+			                    angleAttribute = (AngleAttribute) attribute;
+			                }
+			                return angleAttribute;
+			            }
+			        }
+
+			        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+			        {
+			            // 显示默认的属性编辑器
+			            EditorGUI.PropertyField(position, property);
+
+			            // 根据注解内容处理属性值
+			            clampAngle(property);
+			        }
+
+			        private void clampAngle(SerializedProperty property)
+			        {
+			            if (property == null)
+			                return;
+
+			            float fullRotation = (attributeValue.radians ? Mathf.PI*2f : 360f);
+			            while (property.floatValue < 0f)
+			            {
+			                property.floatValue += fullRotation;
+			            }
+
+			            while (property.floatValue > fullRotation)
+			            {
+			                property.floatValue -= fullRotation;
+			            }
+			        }
+			    }
+			}
+
+
+			using UnityEngine;
+
+			public class IncrementableAttribute : PropertyAttribute
+			{
+			    public readonly float incrementBy;
+
+			    public IncrementableAttribute(float incrementBy)
+			    {
+			        this.incrementBy = incrementBy;
+			    }
+			}
+
+
+			using UnityEditor;
+			using UnityEngine;
+
+			namespace Editor
+			{
+
+			    [CustomPropertyDrawer(typeof(IncrementableAttribute))]
+			    public class IncrementableDrawer : PropertyDrawer
+			    {
+			        private IncrementableAttribute _incrementableAttribute = null;
+
+			        private IncrementableAttribute incrementableAttribute
+			        {
+			            get
+			            {
+			                if (_incrementableAttribute == null)
+			                {
+			                    _incrementableAttribute = (IncrementableAttribute)attribute;
+			                }
+			                return _incrementableAttribute;
+			            }
+			        }
+
+			        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+			        {
+			            // 定义按钮的宽度
+			            int buttonWidth = 40;
+
+			            // -1 为减法， 1 为加法
+			            int SubOrAdd = 0;
+
+			            // 创建减法按钮
+			            if (GUI.Button(new Rect(position.x, position.y, buttonWidth, position.height), "(-" + incrementableAttribute.incrementBy + ")"))
+			            {
+			                SubOrAdd = -1;
+			            }
+
+			            // 创建加法按钮
+			            if (GUI.Button(new Rect(position.width - buttonWidth, position.y, buttonWidth, position.height), "(+" + incrementableAttribute.incrementBy + ")"))
+			            {
+			                SubOrAdd = +1;
+			            }
+
+			            // 是浮点类型
+			            if (property.propertyType == SerializedPropertyType.Float)
+			            {
+			                if (SubOrAdd == -1)
+			                {
+			                    property.floatValue -= incrementableAttribute.incrementBy;
+			                } else if (SubOrAdd == +1)
+			                {
+			                    property.floatValue += incrementableAttribute.incrementBy;
+			                }
+
+			                EditorGUI.LabelField(new Rect(position.x + buttonWidth, position.y, position.width - buttonWidth * 2, position.height), "自定义Float加减操作：" + incrementableAttribute.incrementBy + " : " + property.floatValue);
+			            }
+
+			            // 是整数类型
+			            if (property.propertyType == SerializedPropertyType.Integer)
+			            {
+			                if (SubOrAdd == -1)
+			                {
+			                    property.intValue -= (int)incrementableAttribute.incrementBy;
+			                }
+			                else if (SubOrAdd == +1)
+			                {
+			                    property.intValue += (int)incrementableAttribute.incrementBy;
+			                }
+
+			                EditorGUI.LabelField(new Rect(position.x + buttonWidth, position.y, position.width - buttonWidth * 2, position.height), "自定义Int加减操作：" + incrementableAttribute.incrementBy + " : " + property.intValue);
+			            }
+
+			            
+			        }
+			    }
+			}
+
+
+
+自定义复合类型编辑器 Component Editor
+	自定义一个inspector用于编辑unity对象（Define custom inspector begavior for a unity object）
+	常用于MonoBehavior （Most often used with MonoBehavior）
+
+[CustomEditor(Type)] 自定义编辑器
+	[CanEditMultipleObjects]
+
+扩展编辑器,需要继承Editor （Extend Editor）
+	派生的自定义编辑器基类。使用这个为你的对象来创建自己的自定义检视面板和编辑器。
+	你可以附加该编辑器到一个自定义组件，通过使用CustomEditor属性。
+
+	OnInspectorGUI()		执行这个函数来一个自定义检视面板。
+
+	Notable Properties
+		target/targets		 受检查的对象。
+		serializedObject
+
+
+[ContextMenu(string)] - Object function
+	[executeInEditMode]
+
+[ContextMenuItem(string, string)] - Object field
+
+[MenuItem(string)] -Function
+
+Shortcuts
+	%(ctrl/cmd)  #(shift)  &(alt)  _(nomod)
+
+
+
+资源处理 Asset Processing
+在资源导入前，导入后处理资源
+
+
+
+编辑器外观 Editor Skinning
+GUIStyle
+GUIStyleState
+GUISkin
+
+
+Data Files
+Can be usful for storing data
+	Levels, Stats
+	Can be hand edited
+System.IO
+	File.Exists(string)
+	FileStream(string, FileModel)
+		别忘了关闭流 stream.close() !!!
+Serializers
+	XmlSerializer (常用)
+	BinaryFormatter
+	.serialize(string, object),  .deserialize(stream)
+
+
+
+Custom Assets  自定义资源
+
+数据类应该继承于ScriptableObject  （Data class should extends ScriptableObject）
+
+AssetDatabase
+	FindAssets(string, string[]) {return list of GUIDs}
+	GUIToAssetPath(string)
+	LoadAssetAtPath
+	GenerateUniqueAssetPath(string)
+	CreateAsset(Object, string)
+
+
+
+
+
+
+
+
+
+

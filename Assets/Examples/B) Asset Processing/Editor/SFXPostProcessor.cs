@@ -6,6 +6,7 @@ public class SFXPostProcessor : AssetPostprocessor {
 
     void OnPreprocessAudio()
     {
+        AssetImporter importer = assetImporter;
         AudioImporter audioImporter = (AudioImporter)assetImporter;
         if (audioImporter != null)
         {
@@ -15,7 +16,8 @@ public class SFXPostProcessor : AssetPostprocessor {
             }
             if (assetPath.Contains("SFX"))
             {
-                audioImporter.loadType = AudioImporterLoadType.DecompressOnLoad;
+                AudioClipLoadType audioClipLoadType = audioImporter.defaultSampleSettings.loadType;
+                // audioImporter.loadType = AudioClipLoadType.DecompressOnLoad;
             }
         }
     }

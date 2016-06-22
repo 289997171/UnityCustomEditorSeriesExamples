@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
 
+
+/// <summary>
+/// 使用自定义序列化类
+/// </summary>
 [Serializable]
 public class PlayerStats
 {
@@ -11,7 +14,7 @@ public class PlayerStats
 
 public class ExampleOnePlayer : MonoBehaviour {
 
-	// Not Using Serializable Class
+	// 常规方式，使用一般属性配置，不使用序列化类 Not Using Serializable Class
     /*
 	public float moveSpeed = 1.0f;
 	public float turnSpeed = 90.0f;
@@ -21,8 +24,8 @@ public class ExampleOnePlayer : MonoBehaviour {
      */
 
 
-	 // Using Serializable Class 
-    ///*
+	 // 使用序列化类 Using Serializable Class 
+     ///*
 	 public PlayerStats stats = new PlayerStats();
 
 	 private float MoveSpeed { get { return stats.moveSpeed;} }
