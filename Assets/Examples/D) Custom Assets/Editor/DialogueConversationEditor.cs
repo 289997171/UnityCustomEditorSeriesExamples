@@ -34,6 +34,8 @@ public class DialogueConversationEditor : Editor
             conversation.Lines[i].Text = EditorGUILayout.TextField("", conversation.Lines[i].Text);
 
             EditorGUILayout.Space();
+
+            conversation.Lines[i].obj = EditorGUILayout.ObjectField("Obj", conversation.Lines[i].obj, typeof(GameObject), true) as GameObject;
         }
 
         if (deleteIndex != -1)

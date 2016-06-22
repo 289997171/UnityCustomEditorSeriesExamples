@@ -1,4 +1,9 @@
-视频地址： 	https://www.youtube.com/watch?v=ki6ud_b0_ik&list=PLdJWM-9hbpsFoEMrop5rXDJkdTlaPlg3Q&index=7
+﻿视频地址： 	
+https://www.youtube.com/watch?v=ki6ud_b0_ik&list=PLdJWM-9hbpsFoEMrop5rXDJkdTlaPlg3Q&index=7
+https://www.youtube.com/watch?v=itkm-emb5tg
+https://www.youtube.com/watch?v=6dnQX0ChOsA
+https://www.youtube.com/watch?v=t-wShOv8c1E
+
 http://www.ryan-meier.com/blog/
 https://github.com/ryanmeier/UnityCustomEditorSeriesExamples
 
