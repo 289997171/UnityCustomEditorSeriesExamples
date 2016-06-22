@@ -85,7 +85,7 @@ public class GameBoardData
 
     #region Advanced Functions
 
-     public void Fill(GameBoardTile tileType)
+    public void Fill(GameBoardTile tileType)
     {
         for (int i = 0; i < tiles.Count; i++)
         {

@@ -1,8 +1,10 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
-using System.Collections;
 
+/// <summary>
+/// 自定义 EditorWindow “编辑窗口” 来编辑瓦片地图
+/// </summary>
 public class GameBoardEditorWindow : EditorWindow {
 
     private static GUIStyle _selectedButton = null;
@@ -21,9 +23,16 @@ public class GameBoardEditorWindow : EditorWindow {
         }
     }
 
+    // 当前编辑的瓦片地图数据
     private GameBoardData currentData = new GameBoardData();
+
+    // 当前选择额瓦片块类型
     private GameBoardTile selectedTile;
 
+
+    /// <summary>
+    /// 在主菜单Window下创建GameBoard Editor来打开GameBoardEditorWindow编辑器窗口
+    /// </summary>
     [MenuItem("Window/GameBoard Editor &g")]
     static void CreateWindow()
     {
@@ -32,25 +41,32 @@ public class GameBoardEditorWindow : EditorWindow {
             (GameBoardEditorWindow)EditorWindow.GetWindow(typeof(GameBoardEditorWindow));
     }
 
+
+    /// <summary>
+    /// 自定义编辑窗口核心工具类
+    /// </summary>
     void OnGUI()
     {
+        // 获得当前选择的对象
         GameBoard selectedObjectBoard = null;
         if (Selection.activeGameObject != null)
         {
             selectedObjectBoard = Selection.activeGameObject.GetComponent<GameBoard>();
         }
 
-        EditorGUILayout.BeginHorizontal(); //BEGIN Whole Window
+        {
+            EditorGUILayout.BeginHorizontal(); // 开始绘制窗口 BEGIN Whole Window
+        
+            //Sidebar
+            EditorGUILayout.BeginVertical(GUILayout.Width(200)); // BEGIN Sidebar
 
-        //Sidebar
-        EditorGUILayout.BeginVertical(GUILayout.Width(200)); // BEGIN Sidebar
+            EditorGUILayout.BeginHorizontal(); // BEGIN Board Size
 
-        EditorGUILayout.BeginHorizontal(); // BEGIN Board Size
-
-        currentData.SizeX = EditorGUILayout.IntField("Size X", currentData.SizeX);
-        currentData.SizeY = EditorGUILayout.IntField("Size Y", currentData.SizeY);
-
-        EditorGUILayout.EndHorizontal(); // END Board Size
+            currentData.SizeX = EditorGUILayout.IntField("Size X", currentData.SizeX);
+            currentData.SizeY = EditorGUILayout.IntField("Size Y", currentData.SizeY);
+        
+            EditorGUILayout.EndHorizontal(); // END Board Size
+        }
 
         EditorGUILayout.Space();
 
@@ -67,10 +83,13 @@ public class GameBoardEditorWindow : EditorWindow {
         bool guiEnabled = GUI.enabled;
         GUI.enabled = selectedObjectBoard != null;
 
+        // 将当前编辑器的内容写入选择的瓦片地图
         if (GUILayout.Button("Save to Object"))
         {
             selectedObjectBoard.Load(currentData);
         }
+
+        // 从当前选择的瓦片地图读取数据加载到编辑器
         if (GUILayout.Button("Load From Object"))
         {
             currentData.Load(selectedObjectBoard);
