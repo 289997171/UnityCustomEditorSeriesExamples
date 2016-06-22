@@ -1,8 +1,6 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
-using System.Collections;
-using FileUtil = UnityEditor.FileUtil;
 
 public class FileGameBoardEditorWindow : EditorWindow {
 
@@ -28,6 +26,9 @@ public class FileGameBoardEditorWindow : EditorWindow {
 
     private static string filePrefix = "boards/";
 
+    /// <summary>
+    /// 创建打开编辑窗口的按钮
+    /// </summary>
     [MenuItem("Window/FileGameBoard Editor %g")]
     static void CreateWindow()
     {
@@ -38,6 +39,7 @@ public class FileGameBoardEditorWindow : EditorWindow {
 
     void OnGUI()
     {
+        // 获得当前编辑的游戏对象
         GameBoard selectedObjectBoard = null;
         if (Selection.activeGameObject != null)
         {

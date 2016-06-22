@@ -2,8 +2,11 @@
 using System.IO;
 using System.Xml.Serialization;
 using UnityEngine;
-using System.Collections;
 
+
+/// <summary>
+/// 文件帮助工具类
+/// </summary>
 public static class FileHelper
 {
 
@@ -50,7 +53,7 @@ public static class FileHelper
     }
 
 
-    #region Serialization/Deserialization Methods
+    #region 使用XML序列化与反序列化 Serialization/Deserialization Methods
 
     public static void SerializeXML<T>(FileStream stream, T obj)
     {
@@ -65,6 +68,4 @@ public static class FileHelper
     }
 
     #endregion
-
-
 }
