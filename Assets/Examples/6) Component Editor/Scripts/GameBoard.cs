@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// 游戏板砖类型
+/// </summary>
 public enum GameBoardTile
 {
     EMPTY,
@@ -11,10 +14,14 @@ public enum GameBoardTile
     START,
 }
 
+/// <summary>
+/// 板砖预制体，自定义序列化类
+/// </summary>
 [Serializable]
 public class TilePrefab
 {
     public GameBoardTile Key;
+
     public GameObject Value;
 
     public TilePrefab()
@@ -27,16 +34,20 @@ public class TilePrefab
     }
 }
 
+/// <summary>
+/// 游戏板
+/// </summary>
 public class GameBoard : MonoBehaviour
 {
 
     public GameObject playerObject = null;
 
-
+    // Inspector不显示
     [SerializeField]
     [HideInInspector]
     private int sizeX;
 
+    // Inspector不显示
     [SerializeField]
     [HideInInspector]
     private int sizeY;
@@ -97,7 +108,7 @@ public class GameBoard : MonoBehaviour
 
     #region Board Generation/Utility
 
-    [ExecuteInEditMode]
+    [ExecuteInEditMode] // 在编辑界面让你的功能（类）起作用，就是你不用点开始，就可你让你的功能起作用，打个比方，NGUI里面的Slider的滑动条就是酱紫……
     public void ResizeTilesArray(int oldX, int oldY)
     {
         if (tiles != null && oldX == SizeX && oldY == SizeY)
@@ -125,7 +136,7 @@ public class GameBoard : MonoBehaviour
         GenerateBoard();
     }
 
-    [ExecuteInEditMode]
+    [ExecuteInEditMode] // 在编辑界面让你的功能（类）起作用，就是你不用点开始，就可你让你的功能起作用，打个比方，NGUI里面的Slider的滑动条就是酱紫……
     public void GenerateBoard()
     {
         #region Clean Up Old Board
